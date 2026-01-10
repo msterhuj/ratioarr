@@ -1,2 +1,7 @@
 config.toml
 tmp/
+*.py
+pyproject.toml
+.python-version
+.venv/
+.DS_Store

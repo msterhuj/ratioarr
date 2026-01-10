@@ -8,8 +8,15 @@ import (
 )
 
 type Config struct {
+	Trackers []TrackerConfig `toml:"trackers"`
 }
 
+type TrackerConfig struct {
+	Name   string `toml:"name"`
+	Type   string `toml:"type"`
+	Url    string `toml:"url"`
+	ApiKey string `toml:"api_key"`
+}
 
 func Load(path string) (*Config, error) {
 	if _, err := os.Stat(path); err != nil {

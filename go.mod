@@ -4,6 +4,7 @@ go 1.24.5
 
 require (
 	github.com/BurntSushi/toml v1.6.0
+	github.com/TheVovchenskiy/data v1.0.1
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-co-op/gocron v1.37.0
 )
