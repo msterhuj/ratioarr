@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log/slog"
 
-	"github.com/msterhuj/ratioarr/internal/api"
+	"github.com/msterhuj/ratioarr/internal/router"
 	"github.com/msterhuj/ratioarr/internal/config"
 	"github.com/msterhuj/ratioarr/internal/crawler"
 )
@@ -26,7 +26,7 @@ func Run() error {
 
 	crawler.Start()
 
-	r := api.NewRouter()
+	r := router.NewRouter()
 	r.Run()
 
 	// TODO: init db
