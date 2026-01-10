@@ -33,6 +33,10 @@ func (t *Tracker) Name() string {
 	return t.cfg.Name
 }
 
+func (t *Tracker) Type() string {
+	return "UNIT3D"
+}
+
 type Unit3DUserResponse struct {
 	Username   string `json:"username"`
 	Uploaded   string `json:"uploaded"`

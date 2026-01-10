@@ -1,22 +1,31 @@
 package app
 
 import (
+	"database/sql"
 	"flag"
 	"log/slog"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/msterhuj/ratioarr/internal/config"
 	"github.com/msterhuj/ratioarr/internal/crawler"
+	"github.com/msterhuj/ratioarr/internal/database"
+	"github.com/msterhuj/ratioarr/internal/migrations"
+	"github.com/msterhuj/ratioarr/internal/repository"
 	"github.com/msterhuj/ratioarr/internal/router"
 	"github.com/msterhuj/ratioarr/internal/trackers"
 	"github.com/msterhuj/ratioarr/internal/trackers/unit3d"
 )
 
 var (
-	cfg *config.Config
+	cfg     *config.Config
+	db      *sql.DB
+	queries *repository.Queries
 )
 
 func Run() error {
+
 	configPath := flag.String("config", "config.toml", "Path to config file")
+	disableCrawler := flag.Bool("disable-crawler", false, "Disable the crawler")
 	flag.Parse()
 	var err error
 	cfg, err = config.Load(*configPath)
@@ -27,6 +36,16 @@ func Run() error {
 	slog.Info("config loaded successfully")
 	slog.Info("config", "config", cfg)
 
+	db, err = database.Connect()
+	if err != nil {
+		slog.Error("failed to connect to database", "error", err)
+		return err
+	}
+	defer db.Close()
+	migrations.Migrate(db)
+	queries = repository.New(db)
+
+	slog.Info("initializing trackers")
 	var allTrackers []trackers.Tracker
 	for _, tcfg := range cfg.Trackers {
 		switch tcfg.Type {
@@ -47,11 +66,14 @@ func Run() error {
 		}
 	}
 
-	crawler.Start(allTrackers)
+	if !*disableCrawler {
+		slog.Info("starting ratio crawler")
+		crawler.Start(allTrackers, queries)
+	} else {
+		slog.Warn("ratio crawler is disabled ratio will not be updated")
+	}
 
 	r := router.NewRouter()
 	r.Run()
-
-	// TODO: init db
 	return nil
 }

@@ -5,3 +5,4 @@ pyproject.toml
 .python-version
 .venv/
 .DS_Store
+*.db

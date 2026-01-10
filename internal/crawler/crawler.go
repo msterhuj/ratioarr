@@ -1,14 +1,16 @@
 package crawler
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
 	"github.com/go-co-op/gocron"
+	"github.com/msterhuj/ratioarr/internal/repository"
 	"github.com/msterhuj/ratioarr/internal/trackers"
 )
 
-func Start(trackers []trackers.Tracker) {
+func Start(trackers []trackers.Tracker, query *repository.Queries) {
 	s := gocron.NewScheduler(time.UTC)
 
 	s.Every(100).Seconds().Do(func() {
@@ -20,6 +22,19 @@ func Start(trackers []trackers.Tracker) {
 				continue
 			}
 			slog.Info("Fetched ratio", "tracker", tracker.Name(), "uploaded", ratio.Uploaded, "downloaded", ratio.Downloaded, "ratio", ratio.Ratio)
+			err = query.InsertTrackerStat(
+				context.Background(),
+				repository.InsertTrackerStatParams{
+					Name:       tracker.Name(),
+					Type:       tracker.Type(),
+					Uploaded:   ratio.Uploaded,
+					Downloaded: ratio.Downloaded,
+					Ratio:      ratio.Ratio,
+				},
+			)
+			if err != nil {
+				slog.Error("Failed to insert tracker stat", "tracker", tracker.Name(), "error", err)
+			}
 		}
 	})
 

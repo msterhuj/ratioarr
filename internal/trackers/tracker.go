@@ -8,5 +8,6 @@ type Ratio struct {
 
 type Tracker interface {
 	Name() string
+	Type() string
 	FetchRatio() (*Ratio, error)
 }
