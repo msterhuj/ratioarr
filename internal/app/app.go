@@ -2,26 +2,33 @@ package app
 
 import (
 	"flag"
-	"fmt"
+	"log/slog"
 
+	"github.com/msterhuj/ratioarr/internal/api"
 	"github.com/msterhuj/ratioarr/internal/config"
+	"github.com/msterhuj/ratioarr/internal/crawler"
+)
+
+var (
+	cfg *config.Config
 )
 
 func Run() error {
 	configPath := flag.String("config", "config.toml", "Path to config file")
 	flag.Parse()
-
-	cfg, err := config.Load(*configPath)
+	var err error
+	cfg, err = config.Load(*configPath)
 	if err != nil {
-		return fmt.Errorf("failed to load config: %w", err)
+		slog.Error("failed to load config", "error", err)
+		return err
 	}
-	fmt.Println("Config loaded:", cfg)
+	slog.Info("config loaded successfully")
 
-	fmt.Println("Starting application with config:", *configPath)
+	crawler.Start()
 
-	// TODO: init logger
+	r := api.NewRouter()
+	r.Run()
+
 	// TODO: init db
-	// TODO: start crawler
-	// TODO: start http server
 	return nil
 }
