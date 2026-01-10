@@ -1,0 +1,33 @@
+version: 2
+
+before:
+  hooks:
+    - sqlc generate
+    - go mod tidy
+    - go mod vendor
+
+builds:
+  - id: ratioarr
+    main: ./cmd/ratioarr/main.go
+    binary: ratioarr
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+release:
+  mode: append
+  footer: >-
+
+    ## Docker Image
+
+    ```sh
+    docker pull ghcr.io/ratioarr/ratioarr:latest
+    ```
+
+    ---
+
+    Released by [GoReleaser](https://github.com/goreleaser/goreleaser).

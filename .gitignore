@@ -6,3 +6,7 @@ pyproject.toml
 .venv/
 .DS_Store
 *.db
+# Added by goreleaser init:
+dist/
+build/
+vendor/
