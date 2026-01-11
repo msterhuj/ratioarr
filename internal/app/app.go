@@ -12,7 +12,8 @@ import (
 	"github.com/msterhuj/ratioarr/internal/repository"
 	"github.com/msterhuj/ratioarr/internal/router"
 	"github.com/msterhuj/ratioarr/internal/trackers"
-	"github.com/msterhuj/ratioarr/internal/trackers/unit3d"
+	unit3dTracker "github.com/msterhuj/ratioarr/internal/trackers/unit3d"
+	ygegeTracker "github.com/msterhuj/ratioarr/internal/trackers/ygege"
 	_ "modernc.org/sqlite"
 )
 
@@ -51,13 +52,25 @@ func Run() error {
 		switch tcfg.Type {
 		case "UNIT3D":
 			slog.Info("registering UNIT3D tracker", "name", tcfg.Name)
-			tracker, err := trackers.New(tcfg.Type, unit3d.Config{
+			tracker, err := trackers.New(tcfg.Type, unit3dTracker.Config{
 				Name:   tcfg.Name,
 				URL:    tcfg.Url,
 				APIKey: tcfg.ApiKey,
 			})
 			if err != nil {
 				slog.Error("failed to create UNIT3D tracker", "error", err)
+				return err
+			}
+			allTrackers = append(allTrackers, tracker)
+		case "YGEGE":
+			slog.Info("registering YGEGE tracker", "name", tcfg.Name)
+			tracker, err := trackers.New(tcfg.Type, ygegeTracker.Config{
+				Name:   tcfg.Name,
+				URL:    tcfg.Url,
+				APIKey: tcfg.ApiKey,
+			})
+			if err != nil {
+				slog.Error("failed to create YGEGE tracker", "error", err)
 				return err
 			}
 			allTrackers = append(allTrackers, tracker)
