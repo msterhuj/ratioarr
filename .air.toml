@@ -3,7 +3,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = ["-disable-crawler"]
   bin = "./tmp/main"
   cmd = "npx @tailwindcss/cli -i app.css -o internal/static/app.css && templ generate && sqlc generate && go build -o ./tmp/main cmd/ratioarr/main.go"
   delay = 1000

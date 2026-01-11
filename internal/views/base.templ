@@ -1,0 +1,20 @@
+package views
+
+import "github.com/msterhuj/ratioarr/internal/views/components"
+
+templ Base() {
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>RatioArr</title>
+            <link rel="icon" href="/static/logo.svg" sizes="any" type="image/svg+xml">
+            <link rel="stylesheet" href="/static/app.css" />
+        </head>
+        <body>
+            @components.Nav()
+            { children... }
+        </body>
+    </html>
+}

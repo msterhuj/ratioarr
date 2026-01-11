@@ -14,4 +14,4 @@ node_modules/
 
 # these files are generated automatically when building the project
 *_templ.go
-app.css
+internal/static/app.css

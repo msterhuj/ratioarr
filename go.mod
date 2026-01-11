@@ -5,6 +5,7 @@ go 1.24.5
 require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/TheVovchenskiy/data v1.0.1
+	github.com/a-h/templ v0.3.977
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-co-op/gocron v1.37.0
 	github.com/mattn/go-sqlite3 v1.14.33
@@ -12,7 +13,6 @@ require (
 )
 
 require (
-	github.com/a-h/templ v0.3.977 // indirect
 	github.com/bytedance/sonic v1.14.0 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect
