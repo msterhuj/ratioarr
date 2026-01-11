@@ -1,5 +1,27 @@
 package views
 
-templ Index() {
-    <h1>Welcome to RatioArr</h1>
+import (
+    "fmt"
+    "github.com/msterhuj/ratioarr/internal/views/components"
+    "github.com/msterhuj/ratioarr/internal/repository"
+)
+
+templ Index(trackerStats []repository.TrackerStat) {
+    @Base() {
+        @components.Stats() {
+            for _, stat := range trackerStats {
+                @components.Stat(components.StatProps{
+                    Title: fmt.Sprintf("%s (%s)", stat.Name, stat.Type),
+                    Value: fmt.Sprintf("%.2f", stat.Ratio),
+                    Description: func() string {
+                        uploadedGB := float64(stat.Uploaded) / (1024 * 1024 * 1024)
+                        downloadedGB := float64(stat.Downloaded) / (1024 * 1024 * 1024)
+                        return fmt.Sprintf("↑ %.2f GB | ↓ %.2f GB", uploadedGB, downloadedGB)
+                    }(),
+                }) {
+                    <button class="btn btn-sm">View Details</button>
+                }
+            }
+        }
+    }
 }

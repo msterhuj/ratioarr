@@ -73,7 +73,7 @@ func Run() error {
 		slog.Warn("ratio crawler is disabled ratio will not be updated")
 	}
 
-	r := router.NewRouter()
+	r := router.NewRouter(queries)
 	r.Run()
 	return nil
 }
