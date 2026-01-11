@@ -10,3 +10,8 @@ pyproject.toml
 dist/
 build/
 vendor/
+node_modules/
+
+# these files are generated automatically when building the project
+*_templ.go
+app.css

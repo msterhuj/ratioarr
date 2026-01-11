@@ -17,6 +17,7 @@ Work in Progress
 - sqlc: for generating type-safe database queries
 - goose: for database migrations
 - templ: for generating webpage files from templates
+- tailwindcss: for styling the web interface
 
 ### todo list
 

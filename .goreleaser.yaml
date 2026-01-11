@@ -3,6 +3,8 @@ version: 2
 before:
   hooks:
     - sqlc generate
+    - templ generate
+    - npx --yes @tailwindcss/cli -i app.css -o internal/static/app.css --minify
     - go mod tidy
     - go mod vendor
 
