@@ -5,7 +5,6 @@ import (
 	"flag"
 	"log/slog"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/msterhuj/ratioarr/internal/config"
 	"github.com/msterhuj/ratioarr/internal/crawler"
 	"github.com/msterhuj/ratioarr/internal/database"
@@ -14,6 +13,7 @@ import (
 	"github.com/msterhuj/ratioarr/internal/router"
 	"github.com/msterhuj/ratioarr/internal/trackers"
 	"github.com/msterhuj/ratioarr/internal/trackers/unit3d"
+	_ "modernc.org/sqlite"
 )
 
 var (
