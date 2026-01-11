@@ -17,7 +17,7 @@ ARG TARGETARCH
 
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates tzdata gcc musl-dev sqlite-dev
+RUN apk --no-cache add ca-certificates tzdata
 
 # Install sqlc and templ
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest && \
@@ -27,30 +27,27 @@ COPY go.mod go.sum* ./
 RUN go mod download
 
 COPY . .
-
+# Copy CSS from tailwind stage to make it available for Go embed
+COPY --from=tailwind /app/app.css ./internal/static/app.css
 # Generate code with sqlc
 RUN sqlc generate && \
     templ generate
 
 # Build for the target platform
 # TARGETOS and TARGETARCH are set automatically by buildx
-RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
     -ldflags="-w -s" \
-    -a \
-    -installsuffix cgo \
     -o ratioapp ./cmd/ratioarr
 
 FROM alpine:latest
 
 LABEL org.opencontainers.image.source="https://github.com/msterhuj/ratioarr"
 
-RUN apk --no-cache add ca-certificates tzdata sqlite
-
+RUN apk --no-cache add ca-certificates tzdata
 
 WORKDIR /app
 
 COPY --from=builder /app/ratioapp .
-COPY --from=tailwind /app/app.css ./internal/static/app.css
 
 # TODO: Add a non-root user to run the application
 

@@ -4,6 +4,7 @@ before:
   hooks:
     - sqlc generate
     - templ generate
+    - npm install
     - npx --yes @tailwindcss/cli -i app.css -o internal/static/app.css --minify
     - go mod tidy
     - go mod vendor
@@ -12,6 +13,8 @@ builds:
   - id: ratioarr
     main: ./cmd/ratioarr/main.go
     binary: ratioarr
+    env:
+      - CGO_ENABLED=0
 
 changelog:
   sort: asc
@@ -24,7 +27,7 @@ release:
   mode: append
   footer: >-
 
-    ## Docker Image
+    ### Docker Image
 
     ```sh
     docker pull ghcr.io/ratioarr/ratioarr:latest
