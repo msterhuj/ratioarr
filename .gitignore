@@ -1,16 +1,12 @@
 config.toml
 tmp/
-*.py
-pyproject.toml
-.python-version
-.venv/
 .DS_Store
 *.db
-# Added by goreleaser init:
 dist/
 build/
 vendor/
 node_modules/
+local/
 
 # these files are generated automatically when building the project
 *_templ.go

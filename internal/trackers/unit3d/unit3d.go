@@ -3,6 +3,7 @@ package unit3d
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,6 +11,8 @@ import (
 	"github.com/TheVovchenskiy/data"
 	"github.com/msterhuj/ratioarr/internal/trackers"
 )
+
+var trackerName = "UNIT3D"
 
 type Config struct {
 	Name   string
@@ -34,7 +37,7 @@ func (t *Tracker) Name() string {
 }
 
 func (t *Tracker) Type() string {
-	return "UNIT3D"
+	return trackerName
 }
 
 type Unit3DUserResponse struct {
@@ -92,10 +95,11 @@ func (t *Tracker) FetchRatio() (*trackers.Ratio, error) {
 }
 
 func init() {
-	trackers.Register("UNIT3D", func(cfg any) (trackers.Tracker, error) {
+	slog.Info("Registering tracker type", "type", trackerName)
+	trackers.Register(trackerName, func(cfg any) (trackers.Tracker, error) {
 		c, ok := cfg.(Config)
 		if !ok {
-			return nil, fmt.Errorf("invalid UNIT3D config")
+			return nil, fmt.Errorf("invalid %s config", trackerName)
 		}
 		return New(c), nil
 	})
