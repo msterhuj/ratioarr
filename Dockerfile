@@ -1,3 +1,13 @@
+FROM --platform=$BUILDPLATFORM node:24-alpine AS tailwind
+
+WORKDIR /app
+
+COPY package*.json .
+RUN npm install
+
+COPY app.css input.css
+RUN npx --yes @tailwindcss/cli -i input.css -o app.css --minify
+
 FROM --platform=$BUILDPLATFORM golang:1.24.5-alpine AS builder
 
 # These arguments are automatically provided by Docker buildx
@@ -7,11 +17,11 @@ ARG TARGETARCH
 
 WORKDIR /app
 
-RUN apk --no-cache add ca-certificates tzdata
-RUN adduser -D -g '' -u 10001 ratioapp
+RUN apk --no-cache add ca-certificates tzdata gcc musl-dev sqlite-dev
 
-# Install sqlc
-RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+# Install sqlc and templ
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest && \
+    go install github.com/a-h/templ/cmd/templ@latest
 
 COPY go.mod go.sum* ./
 RUN go mod download
@@ -19,28 +29,30 @@ RUN go mod download
 COPY . .
 
 # Generate code with sqlc
-RUN sqlc generate
+RUN sqlc generate && \
+    templ generate
 
 # Build for the target platform
 # TARGETOS and TARGETARCH are set automatically by buildx
-RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+RUN CGO_ENABLED=1 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
     -ldflags="-w -s" \
     -a \
     -installsuffix cgo \
     -o ratioapp ./cmd/ratioarr
 
-FROM scratch
+FROM alpine:latest
 
-LABEL org.opencontainers.image.source = "https://github.com/msterhuj/ratioarr"
+LABEL org.opencontainers.image.source="https://github.com/msterhuj/ratioarr"
+
+RUN apk --no-cache add ca-certificates tzdata sqlite
+
 
 WORKDIR /app
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
 COPY --from=builder /app/ratioapp .
+COPY --from=tailwind /app/app.css ./internal/static/app.css
 
-USER ratioapp:ratioapp
-EXPOSE 8000
+# TODO: Add a non-root user to run the application
+
+EXPOSE 8080
 ENTRYPOINT ["/app/ratioapp"]
