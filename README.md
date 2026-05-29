@@ -11,8 +11,6 @@ By periodically crawling these trackers, RatioArr fetches user statistics and pr
 - [ ] **Prometheus Metrics**: Expose metrics for monitoring and alerting purposes.
 - [ ] **Rules**: Implement customizable rules to automate actions based on ratio thresholds.
 
-Work in Progress
-
 ## Tech Stack
 
 - Go
@@ -34,5 +32,13 @@ Work in Progress
 ## Available Trackers / To Implement
 
 - [X] UNIT3D (unit3d is a popular open-source torrent tracker software used by various private torrent communities.)
-- [X] YggTorrent
-- [ ] la-cale (cant implement it with api token need to login get cookies and use them)
+
+## Config Example
+
+```toml
+[[trackers]]
+name = "Torrent Example 1"
+url = "https://torrent.example1.com"
+type = "UNIT3D"
+api_key = "your_api_key_here"
+```
