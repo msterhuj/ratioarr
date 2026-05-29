@@ -13,7 +13,6 @@ import (
 	"github.com/msterhuj/ratioarr/internal/router"
 	"github.com/msterhuj/ratioarr/internal/trackers"
 	unit3dTracker "github.com/msterhuj/ratioarr/internal/trackers/unit3d"
-	ygegeTracker "github.com/msterhuj/ratioarr/internal/trackers/ygege"
 	_ "modernc.org/sqlite"
 )
 
@@ -35,7 +34,7 @@ func Run() error {
 		return err
 	}
 	slog.Info("config loaded successfully")
-	slog.Info("config", "config", cfg)
+	slog.Debug("config", "config", cfg)
 
 	db, err = database.Connect()
 	if err != nil {
@@ -59,18 +58,6 @@ func Run() error {
 			})
 			if err != nil {
 				slog.Error("failed to create UNIT3D tracker", "error", err)
-				return err
-			}
-			allTrackers = append(allTrackers, tracker)
-		case "YGEGE":
-			slog.Info("registering YGEGE tracker", "name", tcfg.Name)
-			tracker, err := trackers.New(tcfg.Type, ygegeTracker.Config{
-				Name:   tcfg.Name,
-				URL:    tcfg.Url,
-				APIKey: tcfg.ApiKey,
-			})
-			if err != nil {
-				slog.Error("failed to create YGEGE tracker", "error", err)
 				return err
 			}
 			allTrackers = append(allTrackers, tracker)
